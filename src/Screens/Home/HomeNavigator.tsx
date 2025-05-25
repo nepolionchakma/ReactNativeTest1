@@ -6,6 +6,10 @@ import HomeEmpty from '../../Assets/HomeEmpty.png';
 import HomeFilled from '../../Assets/HomeFilled.png';
 import SettingsEmpty from '../../Assets/SettingsEmpty.png';
 import SettingsFilled from '../../Assets/SettingsFilled.png';
+import ManageEmpty from '../../Assets/ManageEmpty.png';
+import ManageFilled from '../../Assets/ManageFilled.png';
+import ManageDepartment from '../ManageDepartment/ManageDepartment';
+
 type TabIconProps = {
   focused: boolean;
   filledIcon: ImageSourcePropType;
@@ -33,8 +37,8 @@ const HomeNavigator = () => {
           tabBarIcon: ({focused}) => (
             <TabIcon
               focused={focused}
-              filledIcon={HomeEmpty}
-              emptyIcon={HomeFilled}
+              filledIcon={HomeFilled}
+              emptyIcon={HomeEmpty}
               style={styles.iconImage}
             />
           ),
@@ -49,8 +53,24 @@ const HomeNavigator = () => {
           tabBarIcon: ({focused}) => (
             <TabIcon
               focused={focused}
-              filledIcon={SettingsEmpty}
-              emptyIcon={SettingsFilled}
+              filledIcon={SettingsFilled}
+              emptyIcon={SettingsEmpty}
+              style={styles.iconImage}
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Manage"
+        component={ManageDepartment}
+        options={{
+          headerShown: false,
+          tabBarLabel: '',
+          tabBarIcon: ({focused}) => (
+            <TabIcon
+              focused={focused}
+              filledIcon={ManageFilled}
+              emptyIcon={ManageEmpty}
               style={styles.iconImage}
             />
           ),

@@ -9,16 +9,29 @@ import {
 import React, {useState} from 'react';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RootStackParamList} from '../../Types/Types';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 interface WelcomeProps {
   navigation: StackNavigationProp<RootStackParamList, 'Home'>;
 }
 const Welcome = ({navigation}: WelcomeProps) => {
-  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState<string>('');
-  const handleLogin = () => {
-    if (name === 'admin' && password === 'admin') {
-      navigation.navigate('Home');
-    } else {
+  // console.log(process.env.API_URL, 'API_URL');
+  const handleLogin = async () => {
+    try {
+      const res = await axios.post(`${process.env.API_URL}/login`, {
+        email,
+        password,
+      });
+      await AsyncStorage.setItem('user', JSON.stringify(res.data));
+      if (res.data.access_token) {
+        navigation.navigate('Home');
+      }
+      // console.log(res.data, 'res');
+    } catch (error) {
+      console.log(error);
       Alert.alert('Invalid credentials');
     }
   };
@@ -29,8 +42,8 @@ const Welcome = ({navigation}: WelcomeProps) => {
         <TextInput
           placeholder="Name"
           style={styles.textInput}
-          onChangeText={setName}
-          value={name}
+          onChangeText={setEmail}
+          value={email}
         />
         <TextInput
           placeholder="Password"
