@@ -29,7 +29,7 @@ const ManageDepartment = () => {
   console.log(departments, 'departments');
 
   return (
-    <View style={{flex: 1, paddingHorizontal: 10}}>
+    <View style={styles.container}>
       {/* <Text>ManageDepartment</Text> */}
       {isLoading ? (
         <ActivityIndicator size="small" color="#0000ff" />
@@ -46,19 +46,23 @@ const ManageDepartment = () => {
                 </Text>
               </View>
             )}
-            ListHeaderComponent={() => (
-              <Text style={{fontSize: 20, fontWeight: 'bold'}}>
-                Departments
-              </Text>
-            )}
-            // keyExtractor={(item, index) => index.toString()}
+            ListHeaderComponent={ListHeaderComponent}
+            keyExtractor={(item, index) => index.toString()}
           />
         </View>
       )}
     </View>
   );
 };
-
+const ListHeaderComponent = () => {
+  return <Text style={styles.text}>Departments</Text>;
+};
 export default ManageDepartment;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingHorizontal: 10,
+  },
+  text: {fontSize: 20, fontWeight: 'bold'},
+});
