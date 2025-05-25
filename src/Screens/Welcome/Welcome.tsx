@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RootStackParamList} from '../../Types/Types';
 import axios from 'axios';
@@ -35,6 +35,16 @@ const Welcome = ({navigation}: WelcomeProps) => {
       Alert.alert('Invalid credentials');
     }
   };
+  useEffect(() => {
+    (async () => {
+      const user = JSON.parse((await AsyncStorage.getItem('user')) ?? '');
+      console.log(user, 'user');
+      if (user?.access_token) {
+        navigation.navigate('Home');
+      }
+    })();
+  }, [navigation]);
+
   return (
     <View style={styles.container}>
       <Text>WELCOME</Text>
