@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Home from './Home';
 import HomeEmpty from '../../Assets/HomeEmpty.png';
@@ -18,8 +18,9 @@ import ManageEmpty from '../../Assets/ManageEmpty.png';
 import ManageFilled from '../../Assets/ManageFilled.png';
 import ManageDepartment from '../ManageDepartment/ManageDepartment';
 import {createDrawerNavigator} from '@react-navigation/drawer';
-import {IUserType} from '../../Types/Types';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+// import {IUserType} from '../../Types/Types';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useStore} from '../../Stores/StoreProvider';
 
 type TabIconProps = {
   focused: boolean;
@@ -37,18 +38,24 @@ const TabIcon: React.FC<TabIconProps> = ({
 
 // Custom Drawer Content Component
 const CustomDrawerContent = ({navigation}: any) => {
-  const [user, setUser] = useState<IUserType>();
+  const {userStore} = useStore();
+  const API_URL = process.env.API_URL;
   useEffect(() => {
-    (async () => {
-      try {
-        const res = JSON.parse((await AsyncStorage.getItem('user')) ?? '');
-        setUser(res);
-        // console.log(user, 'user');
-      } catch (error) {
-        console.log(error);
-      }
-    })();
-  }, []);
+    userStore.fetchUser();
+  }, [userStore]);
+
+  // const [user, setUser] = useState<IUserType>();
+  // useEffect(() => {
+  //   (async () => {
+  //     try {
+  //       const res = JSON.parse((await AsyncStorage.getItem('user')) ?? '');
+  //       setUser(res);
+  //       // console.log(user, 'user');
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   })();
+  // }, []);
 
   return (
     <View style={styles.drawerContainer}>
@@ -56,11 +63,11 @@ const CustomDrawerContent = ({navigation}: any) => {
       <View style={styles.profileContainer}>
         <Image
           source={{
-            uri: `https://procg.viscorp.app/api/v1/${user?.profile_picture.thumbnail}`,
+            uri: `${API_URL}/${userStore.user?.profile_picture.thumbnail}`,
           }}
           style={styles.profilePic}
         />
-        <Text style={styles.userName}>{user?.user_name}</Text>
+        <Text style={styles.userName}>{userStore.user?.user_name}</Text>
       </View>
 
       {/* Drawer Items */}

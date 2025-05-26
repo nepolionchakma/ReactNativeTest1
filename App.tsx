@@ -19,7 +19,7 @@ const App = () => {
             options={{headerShown: false}}
           />
           <Stack.Screen
-            name="Home"
+            name="HomeScreen"
             component={HomeNavigator}
             options={{headerShown: false}}
           />

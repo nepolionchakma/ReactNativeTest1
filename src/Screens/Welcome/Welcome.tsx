@@ -13,7 +13,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface WelcomeProps {
-  navigation: StackNavigationProp<RootStackParamList, 'Home'>;
+  navigation: StackNavigationProp<RootStackParamList, 'HomeScreen'>;
 }
 const Welcome = ({navigation}: WelcomeProps) => {
   const [email, setEmail] = useState('');
@@ -27,7 +27,7 @@ const Welcome = ({navigation}: WelcomeProps) => {
       });
       await AsyncStorage.setItem('user', JSON.stringify(res.data));
       if (res.data.access_token) {
-        navigation.navigate('Home');
+        navigation.navigate('HomeScreen');
       }
       // console.log(res.data, 'res');
     } catch (error) {
@@ -40,7 +40,7 @@ const Welcome = ({navigation}: WelcomeProps) => {
       const user = JSON.parse((await AsyncStorage.getItem('user')) ?? '');
       // console.log(user, 'user');
       if (user?.access_token) {
-        navigation.navigate('Home');
+        navigation.navigate('HomeScreen');
       }
     })();
   }, [navigation]);
