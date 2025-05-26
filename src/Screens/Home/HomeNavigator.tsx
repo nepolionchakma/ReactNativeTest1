@@ -1,5 +1,13 @@
-import {Image, ImageSourcePropType, ImageStyle, StyleSheet} from 'react-native';
-import React from 'react';
+import {
+  Image,
+  ImageSourcePropType,
+  ImageStyle,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import React, {useEffect, useState} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Home from './Home';
 import HomeEmpty from '../../Assets/HomeEmpty.png';
@@ -9,6 +17,9 @@ import SettingsFilled from '../../Assets/SettingsFilled.png';
 import ManageEmpty from '../../Assets/ManageEmpty.png';
 import ManageFilled from '../../Assets/ManageFilled.png';
 import ManageDepartment from '../ManageDepartment/ManageDepartment';
+import {createDrawerNavigator} from '@react-navigation/drawer';
+import {IUserType} from '../../Types/Types';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type TabIconProps = {
   focused: boolean;
@@ -23,7 +34,65 @@ const TabIcon: React.FC<TabIconProps> = ({
   emptyIcon,
   style,
 }) => <Image source={focused ? filledIcon : emptyIcon} style={style} />;
-const HomeNavigator = () => {
+
+// Custom Drawer Content Component
+const CustomDrawerContent = ({navigation}: any) => {
+  const [user, setUser] = useState<IUserType>();
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = JSON.parse((await AsyncStorage.getItem('user')) ?? '');
+        setUser(res);
+        // console.log(user, 'user');
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+  }, []);
+
+  return (
+    <View style={styles.drawerContainer}>
+      {/* User Profile */}
+      <View style={styles.profileContainer}>
+        <Image
+          source={{
+            uri: `https://procg.viscorp.app/api/v1/${user?.profile_picture.thumbnail}`,
+          }}
+          style={styles.profilePic}
+        />
+        <Text style={styles.userName}>{user?.user_name}</Text>
+      </View>
+
+      {/* Drawer Items */}
+      <TouchableOpacity
+        style={styles.drawerItem}
+        onPress={() => navigation.navigate('Home')}>
+        <Text style={styles.drawerItemText}>Home</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.drawerItem}
+        onPress={() => navigation.navigate('Settings')}>
+        <Text style={styles.drawerItemText}>Settings</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.drawerItem}
+        onPress={() => navigation.navigate('Manage')}>
+        <Text style={styles.drawerItemText}>Manage</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.drawerItem}
+        onPress={() => navigation.navigate('Help')}>
+        <Text style={styles.drawerItemText}>Help</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.drawerItem}
+        onPress={() => navigation.navigate('Profile')}>
+        <Text style={styles.drawerItemText}>Profile</Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
+const BottomNavigator = () => {
   const Tab = createBottomTabNavigator();
 
   return (
@@ -79,9 +148,74 @@ const HomeNavigator = () => {
     </Tab.Navigator>
   );
 };
+const Drawer = createDrawerNavigator();
+
+const HomeNavigator = () => (
+  <Drawer.Navigator drawerContent={props => <CustomDrawerContent {...props} />}>
+    <Drawer.Screen
+      name="Home"
+      component={BottomNavigator}
+      options={{drawerLabel: 'Home'}} // You can change the drawer label here
+    />
+    <Drawer.Screen
+      name="Settings"
+      component={ManageDepartment} // Settings Screen
+      options={{drawerLabel: 'Settings'}}
+    />
+    <Drawer.Screen
+      name="Manage"
+      component={ManageDepartment} // Manage Screen
+      options={{drawerLabel: 'Manage'}}
+    />
+    <Drawer.Screen
+      name="Help"
+      component={ManageDepartment} // Help Screen
+      options={{drawerLabel: 'Help'}}
+    />
+    <Drawer.Screen
+      name="Profile"
+      component={ManageDepartment} // Profile Screen
+      options={{drawerLabel: 'Profile'}}
+    />
+    {/* Add other screens to the Drawer Navigator as needed */}
+  </Drawer.Navigator>
+);
 
 export default HomeNavigator;
 
 const styles = StyleSheet.create({
-  iconImage: {width: 30, height: 30, marginTop: 10},
+  drawerContainer: {
+    flex: 1,
+    backgroundColor: '#f4f4f4',
+    paddingTop: 20,
+  },
+  profileContainer: {
+    alignItems: 'center',
+    paddingBottom: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+    marginBottom: 20,
+  },
+  profilePic: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+  },
+  userName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginTop: 10,
+  },
+  drawerItem: {
+    paddingVertical: 15,
+    paddingLeft: 20,
+  },
+  drawerItemText: {
+    fontSize: 16,
+  },
+  iconImage: {
+    width: 30,
+    height: 30,
+    marginTop: 10,
+  },
 });
