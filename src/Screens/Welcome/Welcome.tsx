@@ -38,7 +38,7 @@ const Welcome = ({navigation}: WelcomeProps) => {
   useEffect(() => {
     (async () => {
       const user = JSON.parse((await AsyncStorage.getItem('user')) ?? '');
-      console.log(user, 'user');
+      // console.log(user, 'user');
       if (user?.access_token) {
         navigation.navigate('Home');
       }
