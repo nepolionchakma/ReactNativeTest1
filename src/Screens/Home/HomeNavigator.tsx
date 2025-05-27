@@ -21,6 +21,7 @@ import {createDrawerNavigator} from '@react-navigation/drawer';
 // import {IUserType} from '../../Types/Types';
 // import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useStore} from '../../Stores/StoreProvider';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type TabIconProps = {
   focused: boolean;
@@ -71,6 +72,7 @@ const CustomDrawerContent = ({navigation}: any) => {
       </View>
 
       {/* Drawer Items */}
+
       <TouchableOpacity
         style={styles.drawerItem}
         onPress={() => navigation.navigate('Home')}>
@@ -78,8 +80,8 @@ const CustomDrawerContent = ({navigation}: any) => {
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.drawerItem}
-        onPress={() => navigation.navigate('Settings')}>
-        <Text style={styles.drawerItemText}>Settings</Text>
+        onPress={() => navigation.navigate('Profile')}>
+        <Text style={styles.drawerItemText}>Profile</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.drawerItem}
@@ -88,13 +90,21 @@ const CustomDrawerContent = ({navigation}: any) => {
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.drawerItem}
+        onPress={() => navigation.navigate('Settings')}>
+        <Text style={styles.drawerItemText}>Settings</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.drawerItem}
         onPress={() => navigation.navigate('Help')}>
         <Text style={styles.drawerItemText}>Help</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.drawerItem}
-        onPress={() => navigation.navigate('Profile')}>
-        <Text style={styles.drawerItemText}>Profile</Text>
+        onPress={() =>
+          // Alert.alert('Logout')
+          AsyncStorage.removeItem('user')
+        }>
+        <Text style={styles.drawerItemText}>Logout</Text>
       </TouchableOpacity>
     </View>
   );

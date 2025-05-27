@@ -25,22 +25,33 @@ const Welcome = ({navigation}: WelcomeProps) => {
         email,
         password,
       });
-      await AsyncStorage.setItem('user', JSON.stringify(res.data));
-      if (res.data.access_token) {
-        navigation.navigate('HomeScreen');
+
+      if (res.data) {
+        await AsyncStorage.setItem('user', JSON.stringify(res.data));
+        if (res.data.access_token) {
+          navigation.navigate('HomeScreen');
+        }
       }
-      // console.log(res.data, 'res');
     } catch (error) {
-      console.log(error);
-      Alert.alert('Invalid credentials');
+      console.error(error); // Log the error for debugging
+      Alert.alert('Invalid credentials or network error');
     }
   };
+
   useEffect(() => {
     (async () => {
-      const user = JSON.parse((await AsyncStorage.getItem('user')) ?? '');
-      // console.log(user, 'user');
-      if (user?.access_token) {
-        navigation.navigate('HomeScreen');
+      const userData = await AsyncStorage.getItem('user');
+
+      if (userData) {
+        try {
+          const user = JSON.parse(userData);
+          // console.log(user, 'user');
+          if (user?.access_token) {
+            navigation.navigate('HomeScreen');
+          }
+        } catch (error) {
+          console.error('Failed to parse user data from AsyncStorage', error);
+        }
       }
     })();
   }, [navigation]);
