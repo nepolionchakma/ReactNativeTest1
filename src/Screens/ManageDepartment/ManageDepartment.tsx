@@ -1,19 +1,24 @@
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
+  Modal,
+  Pressable,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 // import axios from 'axios';
 // import {IDepartmentsType} from '../../Types/Types';
 import {useStore} from '../../Stores/StoreProvider';
 import {observer} from 'mobx-react-lite';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const ManageDepartment = observer(() => {
   // const API_URL = process.env.API_URL;
   const {departmentStore} = useStore();
+  const [modalVisible, setModalVisible] = useState(false);
   // const [isLoading, setIsLoading] = useState(false);
   // const [departments, setDepartments] = useState<IDepartmentsType[]>([]);
   // useEffect(() => {
@@ -34,7 +39,7 @@ const ManageDepartment = observer(() => {
   useEffect(() => {
     departmentStore.fetchDepartments();
   }, [departmentStore]);
-  console.log(departmentStore.isLoading, 'isLoading');
+
   return (
     <View style={styles.container}>
       {/* <Text>ManageDepartment</Text> */}
@@ -58,6 +63,30 @@ const ManageDepartment = observer(() => {
           />
         </View>
       )}
+      <View>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            Alert.alert('Modal has been closed.');
+            setModalVisible(!modalVisible);
+          }}>
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <Text style={styles.modalText}>Hello World!</Text>
+              <Pressable
+                style={[styles.button, styles.buttonClose]}
+                onPress={() => setModalVisible(!modalVisible)}>
+                <Text style={styles.textStyle}>Hide Modal</Text>
+              </Pressable>
+            </View>
+          </View>
+        </Modal>
+        <Pressable onPress={() => setModalVisible(true)}>
+          <MaterialIcons name="home" size={30} color="#000" />
+        </Pressable>
+      </View>
     </View>
   );
 });
@@ -69,7 +98,49 @@ export default ManageDepartment;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 10,
+    padding: 10,
+    justifyContent: 'space-between',
   },
   text: {fontSize: 20, fontWeight: 'bold'},
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  buttonOpen: {
+    backgroundColor: '#F194FF',
+  },
+  buttonClose: {
+    backgroundColor: '#2196F3',
+  },
+  textStyle: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: 'center',
+  },
 });
