@@ -1,6 +1,7 @@
 export type RootStackParamList = {
   Welcome: undefined;
   HomeScreen: undefined;
+  Help: undefined;
 };
 export interface IDepartmentsType {
   department_id: number;

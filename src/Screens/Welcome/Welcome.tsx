@@ -11,6 +11,7 @@ import {StackNavigationProp} from '@react-navigation/stack';
 import {RootStackParamList} from '../../Types/Types';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useStore} from '../../Stores/StoreProvider';
 
 interface WelcomeProps {
   navigation: StackNavigationProp<RootStackParamList, 'HomeScreen'>;
@@ -19,49 +20,60 @@ const Welcome = ({navigation}: WelcomeProps) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState<string>('');
   // console.log(process.env.API_URL, 'API_URL');
+  const {userStore} = useStore();
   const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert('Please enter both email and password');
+      return;
+    }
+
     try {
-      const res = await axios.post(`${process.env.API_URL}/login`, {
+      const API_URL = process.env.API_URL || 'https://your-fallback-url.com';
+      const res = await axios.post(`${API_URL}/login`, {
         email,
         password,
       });
 
       if (res.data) {
         await AsyncStorage.setItem('user', JSON.stringify(res.data));
+        userStore.setUser(res.data);
         if (res.data.access_token) {
-          navigation.navigate('HomeScreen');
+          navigation.replace('HomeScreen');
         }
       }
     } catch (error) {
-      console.error(error); // Log the error for debugging
+      console.error(error);
       Alert.alert('Invalid credentials or network error');
     }
   };
 
   useEffect(() => {
-    (async () => {
-      const userData = await AsyncStorage.getItem('user');
+    const checkUserLogin = async () => {
+      try {
+        const userData = await AsyncStorage.getItem('user');
 
-      if (userData) {
-        try {
+        if (userData) {
           const user = JSON.parse(userData);
-          // console.log(user, 'user');
           if (user?.access_token) {
-            navigation.navigate('HomeScreen');
+            userStore.setUser(user); // update store
+            navigation.replace('HomeScreen'); // go to home screen
           }
-        } catch (error) {
-          console.error('Failed to parse user data from AsyncStorage', error);
         }
+      } catch (error) {
+        console.error('Error parsing stored user:', error);
       }
-    })();
-  }, [navigation]);
+    };
 
+    checkUserLogin();
+  }, [navigation, userStore]);
+
+  // console.log(userStore.user, 'userStore.user');
   return (
     <View style={styles.container}>
       <Text>WELCOME</Text>
       <View style={styles.formContainer}>
         <TextInput
-          placeholder="Name"
+          placeholder="Email"
           style={styles.textInput}
           onChangeText={setEmail}
           value={email}

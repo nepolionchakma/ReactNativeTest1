@@ -1,14 +1,14 @@
+import {types, flow, Instance} from 'mobx-state-tree';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {flow, Instance, SnapshotIn, types} from 'mobx-state-tree';
 
-// Define Profile Picture model with corrected spelling
+// Define Profile Picture model
 const IProfilePictureType = types.model('IProfilePictureType', {
   original: types.string,
   thumbnail: types.string,
 });
 
 // Define User model
-const User = types.model('User', {
+export const User = types.model('User', {
   access_token: types.string,
   isLoggedIn: types.boolean,
   issuedAt: types.string,
@@ -23,26 +23,36 @@ const User = types.model('User', {
 // Define UserStore model
 export const UserStore = types
   .model('UserStore', {
-    user: types.maybe(User), // user can be nullable initially
+    user: types.maybeNull(User), // user can be nullable (either a User instance or null)
   })
   .actions(self => ({
-    // A generator function to fetch user from AsyncStorage
     fetchUser: flow(function* () {
       try {
         const response = yield AsyncStorage.getItem('user');
         if (response) {
           const userData = JSON.parse(response);
-          self.user = User.create(userData); // Create the model instance from the plain object
+          self.user = User.create(userData);
+        } else {
+          self.user = null;
         }
       } catch (error) {
-        console.error('Failed to fetch user', error);
+        console.error('Failed to fetch user from AsyncStorage:', error);
+        self.user = null;
       }
     }),
 
-    // A setter for manually updating the user, if necessary
-    setUser(user: Instance<typeof User>) {
-      self.user = user;
+    setUser(userData: any) {
+      self.user = User.create(userData);
     },
+
+    removeUser: flow(function* () {
+      try {
+        yield AsyncStorage.removeItem('user');
+      } catch (error) {
+        console.error('Failed to remove user from storage:', error);
+      }
+      self.user = null;
+    }),
   }));
 
-export type IUserStore = typeof UserStore.Type;
+export type IUserStore = Instance<typeof UserStore>;

@@ -22,7 +22,7 @@ export const DepartmentStore = types
     fetchDepartments: flow(function* () {
       try {
         const response = yield axios.get(`${API_URL}/test/departments`);
-        console.log(response.data, 'response');
+        // console.log(response.data, 'response');
 
         // Directly replace the departments array
         self.departments.replace(response.data);
