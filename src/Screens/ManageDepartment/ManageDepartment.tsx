@@ -13,7 +13,6 @@ import React, {useEffect, useState} from 'react';
 // import {IDepartmentsType} from '../../Types/Types';
 import {useStore} from '../../Stores/StoreProvider';
 import {observer} from 'mobx-react-lite';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const ManageDepartment = observer(() => {
   // const API_URL = process.env.API_URL;
@@ -84,7 +83,7 @@ const ManageDepartment = observer(() => {
           </View>
         </Modal>
         <Pressable onPress={() => setModalVisible(true)}>
-          <MaterialIcons name="home" size={30} color="#000" />
+          <Text>Create Department</Text>
         </Pressable>
       </View>
     </View>
