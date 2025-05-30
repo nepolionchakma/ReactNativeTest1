@@ -11,12 +11,14 @@ import {
 import React, {useEffect, useState} from 'react';
 // import axios from 'axios';
 // import {IDepartmentsType} from '../../Types/Types';
-import {useStore} from '../../Stores/StoreProvider';
+// import {useStore} from '../../Stores/StoreProvider';
 import {observer} from 'mobx-react-lite';
+import {useRootStore} from '../../Stores/Test/RootStore';
 
 const ManageDepartment = observer(() => {
   // const API_URL = process.env.API_URL;
-  const {departmentStore} = useStore();
+  // const {departmentStore} = useStore();
+  const {departments, fetchDepartments, isLoading} = useRootStore();
   const [modalVisible, setModalVisible] = useState(false);
   // const [isLoading, setIsLoading] = useState(false);
   // const [departments, setDepartments] = useState<IDepartmentsType[]>([]);
@@ -36,18 +38,21 @@ const ManageDepartment = observer(() => {
   // }, [API_URL, departmentStore]);
   // console.log(departments, 'departments');
   useEffect(() => {
-    departmentStore.fetchDepartments();
-  }, [departmentStore]);
+    fetchDepartments();
+  }, [departments, fetchDepartments]);
+  // useEffect(() => {
+  //   departmentStore.fetchDepartments();
+  // }, [departmentStore]);
 
   return (
     <View style={styles.container}>
       {/* <Text>ManageDepartment</Text> */}
-      {departmentStore.isLoading ? (
+      {isLoading ? (
         <ActivityIndicator size="small" color="#0000ff" />
       ) : (
         <View>
           <FlatList
-            data={departmentStore.departments}
+            data={departments}
             renderItem={({item, index}) => (
               <View>
                 <Text>
